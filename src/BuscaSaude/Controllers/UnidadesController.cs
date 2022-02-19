@@ -44,17 +44,10 @@ public class UnidadeController : ControllerBase
     [Route("search/{query}")]
     public IActionResult SearchFilter(string? query)
     {
-        var unidades = _database.Unidades!.AsEnumerable();
+        var unidades = _database.Unidades!.AsQueryable();
         if (!string.IsNullOrEmpty(query))
         {
-            var result = unidades.Where(u => {
-                var diff = String.Compare(
-                    u.Nome, query,
-                    new CultureInfo("pt-BR"),
-                    CompareOptions.IgnoreNonSpace
-                );
-                return diff.Equals(0);
-            });
+            var result = unidades.Where(u => u.Nome!.Contains(query));
             return result.Any() ? Ok(result) : NotFound("Unidade não encontrada");
         }
         return NotFound("Unidade não encontrada");
