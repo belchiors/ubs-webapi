@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using BuscaSaude.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -40,6 +41,26 @@ public class UnidadeController : ControllerBase
     }
 
     [HttpGet]
+    [Route("search/{query}")]
+    public IActionResult SearchFilter(string? query)
+    {
+        var unidades = _database.Unidades!.AsEnumerable();
+        if (!string.IsNullOrEmpty(query))
+        {
+            var result = unidades.Where(u => {
+                var diff = String.Compare(
+                    u.Nome, query,
+                    new CultureInfo("pt-BR"),
+                    CompareOptions.IgnoreNonSpace
+                );
+                return diff.Equals(0);
+            });
+            return result.Any() ? Ok(result) : NotFound("Unidade não encontrada");
+        }
+        return NotFound("Unidade não encontrada");
+    }
+
+    [HttpGet]
     [Route("uf/{uf:int}")]
     public async Task<IActionResult> GetByUf(int uf)
     {
@@ -64,7 +85,7 @@ public class UnidadeController : ControllerBase
     {
         try
         {
-            var unidades = await _database.Unidades!.Where(u => u.Ibge.Equals(ibge)).ToListAsync();
+            var unidades = await _database.Unidades!.Where(u => u.Ibge!.Equals(ibge)).ToListAsync();
             if (!unidades.Any())
             {
                 return NotFound("Unidade não encontrada");
