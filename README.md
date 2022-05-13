@@ -6,7 +6,11 @@ Todos os resultados:
 
 <https://ubs-webapi.herokuapp.com/api/unidades>
 
-Filtro por UF (inserir o código do IBGE):
+Filtro por busca:
+
+<https://ubs-webapi.herokuapp.com/api/unidades>?q={text}
+
+Filtro por UF (inserir o código UF do estado com 2 dígitos):
 
 <https://ubs-webapi.herokuapp.com/api/unidades/uf/>{UF}
 
