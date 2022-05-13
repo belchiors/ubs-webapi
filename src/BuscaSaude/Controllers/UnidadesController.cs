@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BuscaSaude.Controllers;
 
 [ApiController]
-[Route("api/entities")]
+[Route("v1/unidades")]
 [Produces("application/json")]
 public class UnidadeController : ControllerBase
 {
