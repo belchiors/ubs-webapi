@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Net;
 using BuscaSaude.Data;
+using BuscaSaude.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,45 +13,20 @@ namespace BuscaSaude.Controllers;
 public class UnidadeController : ControllerBase
 {
     private readonly ILogger<UnidadeController> _logger;
-    private readonly DatabaseContext _database;
+    private readonly EntityService service;
 
-    public UnidadeController(ILogger<UnidadeController> logger, DatabaseContext database)
+    public UnidadeController(ILogger<UnidadeController> logger, EntityService service)
     {
         _logger = logger;
-        _database = database;
+        this.service = service;
     }
 
     [HttpGet]
-    [Route("")]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll(string? q)
     {
-        try
-        {
-            var unidades = await _database.Unidades!.ToListAsync();
-            if (!unidades.Any())
-            {
-                return NotFound("Unidade não encontrada");
-            }
-            return Ok(unidades);
-        }
-        catch(Exception)
-        {
-            return StatusCode((int)HttpStatusCode.InternalServerError);
-        }
-        
-    }
-
-    [HttpGet]
-    [Route("search/{query}")]
-    public IActionResult SearchFilter(string? query)
-    {
-        var unidades = _database.Unidades!.AsQueryable();
-        if (!string.IsNullOrEmpty(query))
-        {
-            var result = unidades.Where(u => u.Nome!.Contains(query));
-            return result.Any() ? Ok(result) : NotFound("Unidade não encontrada");
-        }
-        return NotFound("Unidade não encontrada");
+        return (q != null && q!.Trim() != "")
+            ? Ok(await service.Contains(q))
+            : Ok(await service.GetAll());
     }
 
     [HttpGet]
