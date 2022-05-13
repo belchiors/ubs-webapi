@@ -1,4 +1,5 @@
 using BuscaSaude.Data;
+using BuscaSaude.Services;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
@@ -8,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<EntityService>();
 
 builder.Services.AddCors(options => {
     options.AddPolicy("CorsPolicy", builder => {
