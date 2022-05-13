@@ -1,14 +1,10 @@
-using System.Globalization;
-using System.Net;
-using BuscaSaude.Data;
 using BuscaSaude.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace BuscaSaude.Controllers;
 
 [ApiController]
-[Route("api/unidades")]
+[Route("api/entities")]
 [Produces("application/json")]
 public class UnidadeController : ControllerBase
 {
@@ -33,56 +29,29 @@ public class UnidadeController : ControllerBase
     [Route("uf/{uf:int}")]
     public async Task<IActionResult> GetByUf(int uf)
     {
-        try
-        {
-            var unidades = await _database.Unidades!.Where(u => u.Uf.Equals(uf)).ToListAsync();
-            if (!unidades.Any())
-            {
-                return NotFound("Unidade não encontrada");
-            }
-            return Ok(unidades);
-        }
-        catch(Exception)
-        {
-            return StatusCode((int)HttpStatusCode.InternalServerError);
-        }
+        var entities = await service.GetByUf(uf);
+        return (entities.Any())
+            ? Ok(entities)
+            : NotFound("Unidade não encontrada");
     }
 
     [HttpGet]
     [Route("ibge/{ibge:int}")]
-    public async Task<IActionResult> GetByIbge(int ibge)
+    public async Task<IActionResult> GetByIbge(string ibge)
     {
-        try
-        {
-            var unidades = await _database.Unidades!.Where(u => u.Ibge!.Equals(ibge)).ToListAsync();
-            if (!unidades.Any())
-            {
-                return NotFound("Unidade não encontrada");
-            }
-            return Ok(unidades);
-        }
-        catch(Exception)
-        {
-            return StatusCode((int)HttpStatusCode.InternalServerError);
-        }
+        var entities = await service.GetByIbge(ibge);
+        return (entities.Any())
+            ? Ok(entities)
+            : NotFound("Unidade não encontrada");
     }
 
     [HttpGet]
     [Route("cnes/{cnes}")]
     public async Task<IActionResult> GetByCnes(string cnes)
     {
-        try
-        {
-            var unidade = await _database.Unidades!.SingleOrDefaultAsync(u => u.Cnes!.Equals(cnes));
-            if (unidade == null)
-            { 
-                return NotFound("Unidade não encontrada");
-            }
-            return Ok(unidade);
-        }
-        catch(Exception)
-        {
-            return StatusCode((int)HttpStatusCode.InternalServerError);
-        }
+        var entity = await service.GetByCnes(cnes);
+        return (entity != null)
+            ? Ok(entity)
+            : NotFound("Unidade não encontrada");
     }
 }
