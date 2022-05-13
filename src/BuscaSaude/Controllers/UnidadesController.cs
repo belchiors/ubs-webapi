@@ -21,7 +21,7 @@ public class UnidadeController : ControllerBase
     public async Task<IActionResult> GetAll(string? q)
     {
         return (q != null && q!.Trim() != "")
-            ? Ok(await service.Contains(q))
+            ? Ok(await service.Contains(q.ToUpper()))
             : Ok(await service.GetAll());
     }
 
